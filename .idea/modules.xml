@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../JavaPatikasi/JavaPatikasi.iml" filepath="$PROJECT_DIR$/../JavaPatikasi/JavaPatikasi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PatikaClone.iml" filepath="$PROJECT_DIR$/PatikaClone.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../PatikaStore/PatikaStoree.iml" filepath="$PROJECT_DIR$/../PatikaStore/PatikaStoree.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../sigortayonetim/sigortayonetim.iml" filepath="$PROJECT_DIR$/../sigortayonetim/sigortayonetim.iml" />
+    </modules>
+  </component>
+</project>
