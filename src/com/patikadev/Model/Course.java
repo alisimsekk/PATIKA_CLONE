@@ -28,6 +28,9 @@ public class Course {
         this.educator = User.getFetch(user_id);
     }
 
+    public Course() {
+    }
+
     public int getId() {
         return id;
     }
@@ -82,6 +85,29 @@ public class Course {
 
     public void setEducator(User educator) {
         this.educator = educator;
+    }
+
+
+    public static Course getFetch(int course_id) {
+        Course obj = null;
+        String query = "SELECT * FROM course WHERE id = ?";
+        try {
+            PreparedStatement pr = DBConnector.getInstance().prepareStatement(query);
+            pr.setInt(1,course_id);
+            ResultSet rs = pr.executeQuery();
+            if (rs.next()){
+                obj = new Course();
+                obj.setId(rs.getInt("id"));
+                obj.setUser_id(rs.getInt("user_id"));
+                obj.setPatika_id(rs.getInt("patika_id"));
+                obj.setName(rs.getString("name"));
+                obj.setLang(rs.getString("lang"));
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return obj;
     }
 
     public static ArrayList<Course> getList(){
@@ -146,6 +172,30 @@ public class Course {
                 String name = rs.getString("name");
                 String lang = rs.getString("lang");
                 obj = new Course(id, userID, patika_id, name, lang);
+                courseList.add(obj);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return courseList;
+    }
+
+
+
+
+    public static ArrayList<Course> getListByPatikaID(int patika_id){
+        ArrayList<Course> courseList = new ArrayList<>();
+        Course obj;
+        try {
+            Statement st = DBConnector.getInstance().createStatement();
+            ResultSet rs = st.executeQuery("SELECT * FROM course WHERE patika_id = " + patika_id);
+            while (rs.next()){
+                int id = rs.getInt("id");
+                int userID = rs.getInt("user_id");
+                int patikaID = rs.getInt("patika_id");
+                String name = rs.getString("name");
+                String lang = rs.getString("lang");
+                obj = new Course(id, userID, patikaID, name, lang);
                 courseList.add(obj);
             }
         } catch (SQLException e) {

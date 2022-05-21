@@ -1,9 +1,6 @@
 package com.patikadev.View;
 
-import com.patikadev.Model.Course;
-import com.patikadev.Model.Operator;
-import com.patikadev.Model.Patika;
-import com.patikadev.Model.User;
+import com.patikadev.Model.*;
 import com.patikadev.helper.*;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -66,6 +63,9 @@ public class OperatorGUI extends JFrame {
     private DefaultTableModel mdl_course_list;
     private Object[] row_course_list;
 
+    private Content c = new Content();
+    private Quiz q = new Quiz();
+
 
 
     private final Operator operator;
@@ -81,7 +81,7 @@ public class OperatorGUI extends JFrame {
         setTitle(Config.PROJECT_TITLE);
         setVisible(true);
 
-        lbl_welcome.setText("Hoşgeldin " + operator.getName());
+        lbl_welcome.setText("Hoş Geldin " + operator.getName());
 //user sekmesi kodlarının başlangıcı
         mdl_user_list = new DefaultTableModel(){
             @Override
@@ -275,7 +275,7 @@ public class OperatorGUI extends JFrame {
             String uname = fld_sh_user_uname.getText();
             String type = cmb_sh_user_type.getSelectedItem().toString();
 
-            String query = User.searchQuery(name, uname, type);
+            String query = Helper.searchQuery(name, uname, type);
             ArrayList <User> searchingUser = User.searchUserList(query);
 
             loadUserModel(searchingUser);
@@ -329,17 +329,29 @@ public class OperatorGUI extends JFrame {
                     Helper.showMsg("fill");
                 }
                 else{
+                    Helper.showMsg("delete");
                     if (Helper.confirm("sure")){
                         int course_id = Integer.parseInt(fld_course_id.getText());
                         if (Course.delete(course_id)){
                             Helper.showMsg("done");
+
+                            for (Content c : Content.getList()){
+                                if (c.getCourse_id() == course_id){
+                                    for (Quiz q : Quiz.getList()){
+                                        if (q.getContent_id() == c.getId()){
+                                            Quiz.delete(q.getId());
+                                            Content.delete(c.getId());
+                                        }
+                                    }
+                                }
+                            }
+
                             loadCourseModel();
                             fld_course_id.setText(null);
                         }
                         else {
                             Helper.showMsg("error");
                         }
-
                     }
                 }
             }

@@ -1,5 +1,7 @@
 package com.patikadev.helper;
 
+import com.patikadev.Model.Patika;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -46,7 +48,6 @@ public class Helper {
                 msg = "Lütfen tüm alanları doldurunuz!";
                 title = "Hata";
                 break;
-
             case "done":
                 msg = "İşlem başarılı!";
                 title = "Sonuç";
@@ -55,7 +56,7 @@ public class Helper {
                 msg = "Bir hata oluştu!";
                 title = "Hata";
             case "delete":
-                msg = "Varsa ilgili dersler de silinecek!";
+                msg = "Varsa ilgili dersler ve quiz soruları da silinecek!";
                 title = "Uyarı";
                 break;
             default:
@@ -84,6 +85,33 @@ public class Helper {
         UIManager.put("OptionPane.yesButtonText", "Evet");
         UIManager.put("OptionPane.noButtonText", "Hayır");
     }
+
+// user search için dinamik query oluşturma
+    public static String searchQuery (String name, String uname, String type) {
+        String query = "SELECT * FROM user WHERE name LIKE '%{{name}}%' AND uname LIKE '%{{uname}}%' AND type LIKE '%{{type}}%'";
+        query = query.replace("{{name}}", name);
+        query = query.replace("{{uname}}", uname);
+        query = query.replace("{{type}}",type);
+
+        return query;
+    }
+
+//content search için dinamik query oluşturma
+    public static String searchQuery (String topic) {
+        String query = "SELECT * FROM content WHERE topic LIKE '%{{topic}}%'";
+        query = query.replace("{{topic}}", topic);
+
+        return query;
+    }
+
+
+    public static String searchQuizQuery (String topic) {
+        String query = "SELECT * FROM quiz WHERE content_topic LIKE '%{{topic}}%'";
+        query = query.replace("{{topic}}", topic);
+
+        return query;
+    }
+
 
 
 }

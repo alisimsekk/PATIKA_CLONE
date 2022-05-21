@@ -2,13 +2,12 @@ package com.patikadev.View;
 
 import com.patikadev.Model.Educator;
 import com.patikadev.Model.Operator;
+import com.patikadev.Model.Student;
 import com.patikadev.Model.User;
 import com.patikadev.helper.Config;
 import com.patikadev.helper.Helper;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class LoginGUI extends JFrame {
     private JPanel wrapper;
@@ -17,6 +16,7 @@ public class LoginGUI extends JFrame {
     private JTextField fld_user_uname;
     private JPasswordField fld_user_pass;
     private JButton btn_login;
+    private JButton btn_sign_info;
 
     public LoginGUI() {
         add(wrapper);
@@ -46,12 +46,17 @@ public class LoginGUI extends JFrame {
                             EducatorGUI edGUI = new EducatorGUI((Educator) u);
                             break;
                         case "student":
-                            StudentGUI stGUI = new StudentGUI();
+                            StudentGUI stGUI = new StudentGUI((Student) u);
                             break;
                     }
                     dispose();
                 }
             }
+        });
+
+//Login ekranı kayıt ol butonu metodu
+        btn_sign_info.addActionListener(e -> {
+            SignUpGUI signGUI = new SignUpGUI();
         });
     }
 
