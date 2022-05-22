@@ -685,16 +685,4 @@ public class OperatorGUI extends JFrame {
             cmb_quiz_content.addItem(new Item(obj.getId(), obj.getTopic()));
         }
     }
-
-    public static void main(String [] args){
-        Helper.setLayout();
-        Operator op = new Operator();
-        op.setId(1);
-        op.setName("aaaa bbbb");
-        op.setPass("1234");
-        op.setType("operator");
-        op.setUname("abab");
-
-        OperatorGUI g = new OperatorGUI(op);
-    }
 }
