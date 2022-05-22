@@ -119,7 +119,6 @@ public class EducatorGUI extends JFrame {
         });
 //İçerikler sekmesi kodlarının bitişi
 
-
 //Quiz soruları sekmesi kodları başlangıcı
         mdl_edu_quiz_list = new DefaultTableModel(){
             @Override
@@ -188,6 +187,7 @@ public class EducatorGUI extends JFrame {
             }
         });
 
+//içerik silme kodları
         btn_content_delete.addActionListener(e -> {
             if (Helper.isFieldEmpty(fld_content_id)){
                 Helper.showMsg("fill");
@@ -387,7 +387,6 @@ public class EducatorGUI extends JFrame {
         }
     }
 
-
 //Quiz sekmesinde içerikler combo box ına verileri aktaran metod
     private void loadContentCombo() {
         cmb_quiz_content.removeAllItems();
@@ -396,8 +395,5 @@ public class EducatorGUI extends JFrame {
                 cmb_quiz_content.addItem(new Item(obj.getId(), obj.getTopic()));
             }
         }
-
     }
-
-
 }

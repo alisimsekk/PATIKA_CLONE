@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class Content {
+
     private int id;
     private String topic;
     private String explanation;
@@ -122,7 +123,6 @@ public class Content {
         return contentList;
     }
 
-
 // girilen anahtar kelimeye göre search metodu
     public static ArrayList<Content> searchContentList(String query){
         ArrayList<Content> contentList = new ArrayList<>();
@@ -144,9 +144,6 @@ public class Content {
         }
         return contentList;
     }
-
-
-
 
     public static boolean add(String topic, String explanation, int course_id, String ytubeUrl) {
         String query = "INSERT INTO content (topic, explanation, course_id, ytube_url) VALUES (?,?,?,?)";
@@ -175,6 +172,4 @@ public class Content {
         }
         return true;
     }
-
-
 }

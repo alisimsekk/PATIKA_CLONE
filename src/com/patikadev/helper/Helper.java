@@ -112,6 +112,4 @@ public class Helper {
         return query;
     }
 
-
-
 }

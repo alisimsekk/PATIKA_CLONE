@@ -19,8 +19,6 @@ public class RegisteredCourse {
         this.student_id = student_id;
     }
 
-
-
     public int getId() {
         return id;
     }
@@ -77,6 +75,5 @@ public class RegisteredCourse {
         }
         return regcourseList;
     }
-
 
 }

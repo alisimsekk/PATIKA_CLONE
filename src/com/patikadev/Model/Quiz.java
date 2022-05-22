@@ -28,7 +28,6 @@ public class Quiz {
 
     }
 
-
     public int getId() {
         return id;
     }
@@ -91,6 +90,26 @@ public class Quiz {
         return quizList;
     }
 
+    public static Quiz getFetch(int id) {
+        Quiz obj = null;
+        String query = "SELECT * FROM quiz WHERE id = ?";
+        try {
+            PreparedStatement pr = DBConnector.getInstance().prepareStatement(query);
+            pr.setInt(1,id);
+            ResultSet rs = pr.executeQuery();
+            if (rs.next()){
+                obj = new Quiz();
+                obj.setId(rs.getInt("id"));
+                obj.setQuestion(rs.getString("question"));
+                obj.setContent_topic(rs.getString("content_topic"));
+                obj.setContent_id(rs.getInt("content_id"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return obj;
+    }
+
     public static boolean add(String question, String content_topic, int content_id) {
         String query = "INSERT INTO quiz (question, content_topic, content_id) VALUES (?, ?, ?)";
         try {
@@ -114,7 +133,6 @@ public class Quiz {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return true;
     }
 
@@ -138,6 +156,4 @@ public class Quiz {
 
         return quizList;
     }
-
-
 }

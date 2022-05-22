@@ -180,9 +180,6 @@ public class Course {
         return courseList;
     }
 
-
-
-
     public static ArrayList<Course> getListByPatikaID(int patika_id){
         ArrayList<Course> courseList = new ArrayList<>();
         Course obj;

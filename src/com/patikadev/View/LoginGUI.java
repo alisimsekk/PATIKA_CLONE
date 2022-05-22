@@ -59,7 +59,6 @@ public class LoginGUI extends JFrame {
             SignUpGUI signGUI = new SignUpGUI();
         });
     }
-
     public static void main(String[] args){
         Helper.setLayout();
         LoginGUI l = new LoginGUI();

@@ -52,6 +52,28 @@ public class OperatorGUI extends JFrame {
     private JButton btn_course_add;
     private JButton btn_course_delete;
     private JTextField fld_course_id;
+    private JPanel pnl_content_list;
+    private JScrollPane scrl_content_list;
+    private JTable tbl_content_list;
+    private JPanel pnl_content_form;
+    private JPanel pnl_quiz_list;
+    private JPanel pnl_ope_content_form;
+    private JTextField fld_content_topic;
+    private JTextField fld_content_explanation;
+    private JTextField fld_ytube_url;
+    private JComboBox cmb_content_course;
+    private JButton btn_content_add;
+    private JTextField fld_content_id;
+    private JButton btn_content_delete;
+    private JScrollPane scrl_quiz_list;
+    private JTable tbl_quiz_list;
+    private JPanel pnl_quiz_form;
+    private JPanel pnl_edu_quiz_form;
+    private JTextField fld_quiz_question;
+    private JComboBox cmb_quiz_content;
+    private JButton btn_quiz_add;
+    private JTextField fld_quiz_id_del;
+    private JButton btn_quiz_delete;
 
     private DefaultTableModel mdl_user_list;
     private Object[] row_user_list;
@@ -63,10 +85,14 @@ public class OperatorGUI extends JFrame {
     private DefaultTableModel mdl_course_list;
     private Object[] row_course_list;
 
+    private DefaultTableModel mdl_content_list;
+    private Object[] row_content_list;
+
+    private DefaultTableModel mdl_quiz_list;
+    private Object[] row_quiz_list;
+
     private Content c = new Content();
     private Quiz q = new Quiz();
-
-
 
     private final Operator operator;
 
@@ -93,12 +119,8 @@ public class OperatorGUI extends JFrame {
         };
         Object [] col_user_list = {"ID", "Ad Soyad", "Kullanıcı Adı", "Şifre", "Üyelik Tipi"};
         mdl_user_list.setColumnIdentifiers(col_user_list);
-
         row_user_list = new Object[col_user_list.length];
-
         loadUserModel();
-
-
         tbl_user_list.setModel(mdl_user_list);
         tbl_user_list.getTableHeader().setReorderingAllowed(false);
 
@@ -124,7 +146,6 @@ public class OperatorGUI extends JFrame {
                 }
             }
         });
-
 
         tbl_user_list.getModel().addTableModelListener(new TableModelListener() {
             @Override
@@ -170,16 +191,42 @@ public class OperatorGUI extends JFrame {
             });
         });
 
-//patika sekmesindeki delete pop menüsüne tıklanıldığında yapılacaklar:
+//patika sekmesindeki delete pop menüsüne tıklanıldığında yapılacaklar: patika ve buna bağlı tüm alt bileşenler de silinir
         deleteMenu.addActionListener(e -> {
             Helper.showMsg("delete");
             if (Helper.confirm("sure")){
                 int select_id = Integer.parseInt(tbl_patika_list.getValueAt(tbl_patika_list.getSelectedRow(),0).toString());
                 if (Patika.delete(select_id)){
                     Helper.showMsg("done");
+                    for(Course cou : Course.getList()){
+                        if (cou.getPatika_id() == select_id ){   // Course.delete(cou.getId());
+                            for (Content con : Content.getList()){
+                                if (con.getCourse_id() == cou.getId()){  //Content.delete(con.getId());
+                                    for (Quiz q : Quiz.getList()){
+                                        if (q.getContent_id() == con.getId()){ //Quiz.delete(q.getId());
+                                            for (AnswerQuiz ans : AnswerQuiz.getList()){
+                                                if (ans.getQuestion_id() == q.getId()){ //AnswerQuiz.delete(ans.getId());
+                                                    AnswerQuiz.delete(ans.getId());
+
+                                                }
+                                            }
+                                            Quiz.delete(q.getId());
+                                        }
+                                    }
+                                    Content.delete(con.getId());
+                                }
+                            }
+                            Course.delete(cou.getId());
+                        }
+                    }
+
                     loadPatikaModel();
                     loadPatikaCombo();
                     loadCourseModel();
+                    loadCourseCombo();
+                    loadContentModel();
+                    loadContentCombo();
+                    loadQuizModel();
                 }
                 else{
                     Helper.showMsg("error");
@@ -209,7 +256,6 @@ public class OperatorGUI extends JFrame {
 
 //patika sekmesi kodlarının bitişi
 
-
 //Dersler sekmesi kodlarının başlangıcı
         mdl_course_list = new DefaultTableModel();
         Object[] col_courseList = {"ID", "Dersin Adı", "Programlama Dili", "Patika", "Eğitmen"};
@@ -221,9 +267,82 @@ public class OperatorGUI extends JFrame {
         tbl_course_list.getTableHeader().setReorderingAllowed(false);
         loadPatikaCombo();
         loadEducatorCombo();
+
 //Dersler sekmesi kodlarının bitişi
 
+        //İçerikler sekmesi kodlarının başlangıcı
+        mdl_content_list = new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                if (column == 0 )
+                    return false;
+                return super.isCellEditable(row, column);
+            }
+        };
 
+        Object[] col_edu_content_list = {"ID", "İçerik Başlığı", "Açıklama", "Ders Adı", "YouTube Linki"};
+        mdl_content_list.setColumnIdentifiers(col_edu_content_list);
+        row_content_list = new Object[col_edu_content_list.length];
+        loadContentModel();
+        tbl_content_list.setModel(mdl_content_list);
+        tbl_content_list.getColumnModel().getColumn(0).setMaxWidth(75);
+        tbl_content_list.getTableHeader().setReorderingAllowed(false);
+        loadCourseCombo();
+
+//üzerine tıklanan içeriğin id sini silme tablosundaki id kutucuğuna yazdırma
+        tbl_content_list.getSelectionModel().addListSelectionListener(e -> {
+            try {
+                String select_content_id = tbl_content_list.getValueAt(tbl_content_list.getSelectedRow(),0).toString();
+                fld_content_id.setText(select_content_id);
+            }
+            catch (Exception exception){
+
+            }
+        });
+
+//İçerikler sekmesi kodlarının bitişi
+
+//Quiz soruları sekmesi kodları başlangıcı
+        mdl_quiz_list = new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                if (column == 0 )
+                    return false;
+                return super.isCellEditable(row, column);
+            }
+        };
+
+        Object[] col_edu_quiz_list = {"ID", "Quiz Sorusu", "İçerik Başlığı", "İçerik ID"};
+        mdl_quiz_list.setColumnIdentifiers(col_edu_quiz_list);
+        row_quiz_list = new Object[col_edu_quiz_list.length];
+        loadQuizModel();
+        tbl_quiz_list.setModel(mdl_quiz_list);
+        tbl_quiz_list.getColumnModel().getColumn(0).setMaxWidth(50);
+        //tbl_edu_quiz_list.getColumnModel().getColumn(2).setMaxWidth(300);
+        tbl_quiz_list.getColumnModel().getColumn(3).setMaxWidth(100);
+        tbl_quiz_list.getTableHeader().setReorderingAllowed(false);
+        loadContentCombo();
+
+        tbl_quiz_list.getSelectionModel().addListSelectionListener(e -> {
+            try {
+                String select_quiz_id = tbl_quiz_list.getValueAt(tbl_quiz_list.getSelectedRow(),0).toString();
+                fld_quiz_id_del.setText(select_quiz_id);
+            }
+            catch (Exception exception){
+
+            }
+        });
+
+        tbl_quiz_list.getSelectionModel().addListSelectionListener(e -> {
+            try {
+                String select_content_id = tbl_quiz_list.getValueAt(tbl_quiz_list.getSelectedRow(),0).toString();
+                fld_content_id.setText(select_content_id);
+            }
+            catch (Exception exception){
+
+            }
+        });
+//Quiz soruları sekmesi kodları bitişi
 
         btn_user_add.addActionListener(e -> {
             if(Helper.isFieldEmpty(fld_user_name) || Helper.isFieldEmpty(fld_user_uname) || Helper.isFieldEmpty(fld_user_pass)){
@@ -315,6 +434,7 @@ public class OperatorGUI extends JFrame {
                     loadCourseModel();
                     fld_course_name.setText(null);
                     fld_course_lang.setText(null);
+                    loadCourseCombo();
                 }
                 else {
                     Helper.showMsg("error");
@@ -356,6 +476,118 @@ public class OperatorGUI extends JFrame {
                 }
             }
         });
+
+        btn_content_add.addActionListener(e -> {
+            Item courseItem = (Item) cmb_content_course.getSelectedItem();
+
+            if (Helper.isFieldEmpty(fld_content_topic) || Helper.isFieldEmpty(fld_content_explanation) || Helper.isFieldEmpty(fld_ytube_url)){
+                Helper.showMsg("fill");
+            }
+            else{
+                if (Content.add(fld_content_topic.getText(), fld_content_explanation.getText(), courseItem.getKey(), fld_ytube_url.getText())){
+                    Helper.showMsg("done");
+                    loadContentModel();
+                    fld_content_topic.setText(null);
+                    fld_content_explanation.setText(null);
+                    fld_ytube_url.setText(null);
+                    loadContentCombo();
+                }
+                else {
+                    Helper.showMsg("error");
+                }
+            }
+        });
+
+//içerik silme kodları
+        btn_content_delete.addActionListener(e -> {
+            if (Helper.isFieldEmpty(fld_content_id)){
+                Helper.showMsg("fill");
+            }
+            else {
+                Helper.showMsg("delete");
+                if (Helper.confirm("sure")){
+                    int content_id = Integer.parseInt(fld_content_id.getText());
+                    if (Content.delete(content_id)){
+                        Helper.showMsg("done");
+
+                        for (Quiz q : Quiz.getList()){
+                            if (q.getContent_id() == content_id){
+                                Quiz.delete(q.getId());
+                            }
+                        }
+                        loadContentModel();
+                        fld_content_id.setText(null);
+                        loadContentCombo();
+                        loadQuizModel();
+                    }
+                    else{
+                        Helper.showMsg("error");
+                    }
+                }
+            }
+        });
+
+//quiz ekleme
+        btn_quiz_add.addActionListener(e -> {
+            Item contentItem = (Item) cmb_quiz_content.getSelectedItem();
+            if (Helper.isFieldEmpty(fld_quiz_question)){
+                Helper.showMsg("fill");
+            }
+            else{
+                if (Quiz.add(fld_quiz_question.getText(), contentItem.getValue(), contentItem.getKey())){
+                    Helper.showMsg("done");
+                    loadQuizModel();
+                    fld_quiz_question.setText(null);
+                }
+                else {
+                    Helper.showMsg("error");
+                }
+            }
+        });
+
+//quiz sorusu silme
+        btn_quiz_delete.addActionListener(e -> {
+            if (Helper.isFieldEmpty(fld_quiz_id_del)){
+                Helper.showMsg("fill");
+            }
+            else {
+                if (Helper.confirm("sure")){
+                    int quiz_id = Integer.parseInt(fld_quiz_id_del.getText());
+                    if (Quiz.delete(quiz_id)){
+                        Helper.showMsg("done");
+                        loadQuizModel();
+                        fld_quiz_id_del.setText(null);
+                    }
+                    else {
+                        Helper.showMsg("error");
+                    }
+                }
+            }
+        });
+    }
+
+    private void loadContentModel(){
+        DefaultTableModel clearModel = (DefaultTableModel) tbl_content_list.getModel();
+        clearModel.setRowCount(0);
+        int i;
+        for (Content obj : Content.getList()){
+            i=0;
+            row_content_list[i++] = obj.getId();
+            row_content_list[i++] = obj.getTopic();
+            row_content_list[i++] = obj.getExplanation();
+            row_content_list[i++] = obj.getCourse().getName();
+            row_content_list[i++] = obj.getYtubeUrl();
+            mdl_content_list.addRow(row_content_list);
+
+        }
+    }
+
+//İçerikler sekmesinde ders combo box ına verileri aktaran metod
+    public void loadCourseCombo(){
+        cmb_content_course.removeAllItems();
+        for (Course obj : Course.getList()){
+            cmb_content_course.addItem(new Item(obj.getId(), obj.getName()));
+        }
     }
 
     private void loadCourseModel() {
@@ -428,6 +660,29 @@ public class OperatorGUI extends JFrame {
         cmb_course_user.removeAllItems();
         for (User obj : User.getListOnlyEducator()){
             cmb_course_user.addItem(new Item(obj.getId(), obj.getName()));
+        }
+    }
+
+    private void loadQuizModel() {
+        DefaultTableModel clearModel = (DefaultTableModel) tbl_quiz_list.getModel();
+        clearModel.setRowCount(0);
+        int i;
+        for (Quiz obj : Quiz.getList()){
+            i = 0;
+            row_quiz_list[i++] = obj.getId();
+            row_quiz_list[i++] = obj.getQuestion();
+            row_quiz_list[i++] = obj.getContent_topic();
+            row_quiz_list[i++] = obj.getContent_id();
+            mdl_quiz_list.addRow(row_quiz_list);
+
+        }
+    }
+
+    //Quiz sekmesinde içerikler combo box ına verileri aktaran metod
+    private void loadContentCombo() {
+        cmb_quiz_content.removeAllItems();
+        for (Content obj : Content.getList()){
+            cmb_quiz_content.addItem(new Item(obj.getId(), obj.getTopic()));
         }
     }
 

@@ -5,15 +5,8 @@ import com.patikadev.Model.RegisteredCourse;
 import com.patikadev.Model.Student;
 import com.patikadev.helper.Config;
 import com.patikadev.helper.Helper;
-
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 public class GetCourseStudentGUI extends JFrame{
@@ -62,7 +55,6 @@ public class GetCourseStudentGUI extends JFrame{
         tbl_stu_course_list.getTableHeader().setReorderingAllowed(false);
 //Dersler sekmesi kodları bitişi
 
-
         tbl_stu_course_list.getSelectionModel().addListSelectionListener(e -> {
             try {
                 String select_course_id = tbl_stu_course_list.getValueAt(tbl_stu_course_list.getSelectedRow(),0).toString();
@@ -74,15 +66,16 @@ public class GetCourseStudentGUI extends JFrame{
         });
 
         btn_register_course.addActionListener(e -> {
-            ArrayList<Integer> list = new ArrayList<>();
+            ArrayList<Integer> listCorseID = new ArrayList<>();
+
             if (Helper.isFieldEmpty(fld_register_course_id)){
                 Helper.showMsg("fill");
             }
             else {
                 for (RegisteredCourse c : RegisteredCourse.getList()) { //var olan dersi tekrar eklememek için yazıldı
-                    list.add(c.getCourse_id());
+                    listCorseID.add(c.getCourse_id());
                 }
-                if (!list.contains(Integer.parseInt(fld_register_course_id.getText()))){
+                if (!listCorseID.contains(Integer.parseInt(fld_register_course_id.getText()))){
                     if (RegisteredCourse.add(Integer.parseInt(fld_register_course_id.getText()), student.getId())){
                         Helper.showMsg("done");
                         fld_register_course_id.setText(null);
@@ -92,13 +85,12 @@ public class GetCourseStudentGUI extends JFrame{
                         Helper.showMsg("error");
                     }
                 }
-                else if (list.contains(Integer.parseInt(fld_register_course_id.getText()))){
+                else if (listCorseID.contains(Integer.parseInt(fld_register_course_id.getText())) ){
                     Helper.showMsg("Ders zaten ekli");
+
                 }
             }
         });
-
-
     }
 
     private void loadCourseModel() {
@@ -112,7 +104,6 @@ public class GetCourseStudentGUI extends JFrame{
             row_course_list[i++] = obj.getLang();
             row_course_list[i++] = obj.getPatika().getName();
             row_course_list[i++] = obj.getEducator().getName();
-
             mdl_course_list.addRow(row_course_list);
         }
     }

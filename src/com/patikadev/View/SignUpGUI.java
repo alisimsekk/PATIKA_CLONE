@@ -44,7 +44,6 @@ public class SignUpGUI extends JFrame{
                         fld_sign_name.setText(null);
                         fld_sign_uname.setText(null);
                         fld_sign_pass.setText(null);
-
                     }
                 }
 

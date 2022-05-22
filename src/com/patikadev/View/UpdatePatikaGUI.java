@@ -35,9 +35,6 @@ public class UpdatePatikaGUI extends JFrame {
             dispose();
         });
     }
-
-
-
 }
 
 
